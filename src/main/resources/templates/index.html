@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>Hotel PMS</title>
+</head>
+<body>
+    <header>
+        <h1>Hotel PMS</h1>
+    </header>
+    <main>
+        <p>Hotel Property Management System is running.</p>
+        <ul>
+            <li><a th:href="@{/health}">Health Check</a></li>
+            <li><a th:href="@{/api/rooms}">Rooms API</a></li>
+        </ul>
+    </main>
+</body>
+</html>
