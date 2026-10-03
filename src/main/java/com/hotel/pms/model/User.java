@@ -34,6 +34,9 @@ public class User {
     @Column(nullable = false, unique = true)
     private String email;
 
+    @Column(nullable = false)
+    private boolean enabled = true; // New field for user deactivation
+
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -49,6 +52,7 @@ public class User {
         this.username = username;
         this.password = password;
         this.email = email;
+        this.enabled = true;
     }
 
     public Long getId() { return id; }
@@ -58,6 +62,8 @@ public class User {
     public void setPassword(String password) { this.password = password; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+    public boolean isEnabled() { return enabled; }
+    public void setEnabled(boolean enabled) { this.enabled = enabled; }
     public Set<Role> getRoles() { return roles; }
     public void setRoles(Set<Role> roles) { this.roles = roles; }
     public List<HousekeepingTask> getAssignedHousekeepingTasks() { return assignedHousekeepingTasks; }
