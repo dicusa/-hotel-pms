@@ -1,39 +1,43 @@
 package com.example.model;
 
-import jakarta.persistence.*;
-import java.util.Date;
+import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Invoice {
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(optional = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reservation_id")
     private Reservation reservation;
 
-    @Temporal(TemporalType.DATE)
-    private Date issuedDate;
+    private double roomCharges;
+    private double taxAmount;
+    private double extraCharges;
+    private double totalAmount;
+    private Double paidAmount;
 
-    private Double amount;
-    private Boolean paid;
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Payment> payments;
 
-    public Invoice() {}
-
-    public Invoice(Reservation reservation, Date issuedDate, Double amount, Boolean paid) {
-        this.reservation = reservation;
-        this.issuedDate = issuedDate;
-        this.amount = amount;
-        this.paid = paid;
-    }
-
+    // getters & setters
     public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     public Reservation getReservation() { return reservation; }
     public void setReservation(Reservation reservation) { this.reservation = reservation; }
-    public Date getIssuedDate() { return issuedDate; }
-    public void setIssuedDate(Date issuedDate) { this.issuedDate = issuedDate; }
-    public Double getAmount() { return amount; }
-    public void setAmount(Double amount) { this.amount = amount; }
-    public Boolean getPaid() { return paid; }
-    public void setPaid(Boolean paid) { this.paid = paid; }
+    public double getRoomCharges() { return roomCharges; }
+    public void setRoomCharges(double roomCharges) { this.roomCharges = roomCharges; }
+    public double getTaxAmount() { return taxAmount; }
+    public void setTaxAmount(double taxAmount) { this.taxAmount = taxAmount; }
+    public double getExtraCharges() { return extraCharges; }
+    public void setExtraCharges(double extraCharges) { this.extraCharges = extraCharges; }
+    public double getTotalAmount() { return totalAmount; }
+    public void setTotalAmount(double totalAmount) { this.totalAmount = totalAmount; }
+    public Double getPaidAmount() { return paidAmount; }
+    public void setPaidAmount(Double paidAmount) { this.paidAmount = paidAmount; }
+    public List<Payment> getPayments() { return payments; }
+    public void setPayments(List<Payment> payments) { this.payments = payments; }
 }
