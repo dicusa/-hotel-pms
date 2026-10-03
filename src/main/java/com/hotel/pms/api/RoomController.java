@@ -33,4 +33,32 @@ public class RoomController {
     public Room createRoom(@RequestBody Room room) {
         return roomRepository.save(room);
     }
+
+    /**
+     * Mark a room as clean (available).
+     */
+    @PostMapping("/{id}/clean")
+    public ResponseEntity<Room> markClean(@PathVariable Long id) {
+        return roomRepository.findById(id)
+                .map(room -> {
+                    room.setStatus(Room.RoomStatus.AVAILABLE);
+                    roomRepository.save(room);
+                    return ResponseEntity.ok(room);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
+
+    /**
+     * Mark a room as out‑of‑order.
+     */
+    @PostMapping("/{id}/out-of-order")
+    public ResponseEntity<Room> markOutOfOrder(@PathVariable Long id) {
+        return roomRepository.findById(id)
+                .map(room -> {
+                    room.setStatus(Room.RoomStatus.OUT_OF_ORDER);
+                    roomRepository.save(room);
+                    return ResponseEntity.ok(room);
+                })
+                .orElse(ResponseEntity.notFound().build());
+    }
 }

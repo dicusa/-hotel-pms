@@ -16,7 +16,12 @@ import java.util.List;
 public class Room {
 
     public enum RoomStatus {
-        AVAILABLE, OCCUPIED, CLEANING, MAINTENANCE
+        AVAILABLE,
+        OCCUPIED,
+        CLEANING,
+        MAINTENANCE,
+        NEEDS_CLEANING,
+        OUT_OF_ORDER
     }
 
     @Id
