@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Room Inventory Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/sockjs-client@1/dist/sockjs.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/stompjs@2.3.3/lib/stomp.min.js"></script>
+</head>
+<body>
+<h1>Room Inventory Dashboard</h1>
+<div>
+  Floor: <select id="floorFilter"><option value="">All</option></select>
+  Status: <select id="statusFilter"><option value="">All</option><option value="AVAILABLE">Available</option><option value="OCCUPIED">Occupied</option><option value="CLEANING">Cleaning</option></select>
+  <button onclick="loadRooms()">Apply Filters</button>
+</div>
+<table border="1" id="roomsTable">
+  <thead><tr><th>ID</th><th>Number</th><th>Floor</th><th>Status</th></tr></thead>
+  <tbody></tbody>
+</table>
+
+<script>
+let stompClient = null;
+
+function connectWebSocket() {
+  const socket = new SockJS('/ws');
+  stompClient = Stomp.over(socket);
+  stompClient.connect({}, function(frame) {
+    stompClient.subscribe('/topic/rooms', function(message) {
+      const updatedRoom = JSON.parse(message.body);
+      updateRoomRow(updatedRoom);
+    });
+  });
+}
+
+function loadRooms() {
+  const floor = document.getElementById('floorFilter').value;
+  const status = document.getElementById('statusFilter').value;
+  let url = '/api/rooms';
+  const params = [];
+  if (floor) params.push('floor=' + floor);
+  if (status) params.push('status=' + status);
+  if (params.length) url += '?' + params.join('&');
+  fetch(url).then(r=>r.json()).then(renderRooms);
+}
+
+function renderRooms(rooms) {
+  const tbody = document.querySelector('#roomsTable tbody');
+  tbody.innerHTML = '';
+  const floorSet = new Set();
+  rooms.forEach(r => {
+    floorSet.add(r.floor);
+    const tr = document.createElement('tr');
+    tr.id = 'room-' + r.id;
+    tr.innerHTML = `<td>${r.id}</td><td>${r.number}</td><td>${r.floor}</td><td>${r.status}</td>`;
+    tbody.appendChild(tr);
+  });
+  const floorSelect = document.getElementById('floorFilter');
+  floorSelect.innerHTML = '<option value="">All</option>';
+  Array.from(floorSet).sort().forEach(f=> {
+    const opt = document.createElement('option');
+    opt.value = f;
+    opt.textContent = f;
+    floorSelect.appendChild(opt);
+  });
+}
+
+function updateRoomRow(room) {
+  const row = document.getElementById('room-' + room.id);
+  if (row) {
+    row.cells[3].textContent = room.status;
+  } else {
+    loadRooms();
+  }
+}
+
+window.onload = function() {
+  connectWebSocket();
+  loadRooms();
+};
+</script>
+</body>
+</html>
