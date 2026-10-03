@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Check‑In Result</title>
+</head>
+<body>
+<h1>Reservation Details</h1>
+<div th:if="${reservation}">
+    <p>Reservation ID: <span th:text="${reservation.id}"></span></p>
+    <p>Guest: <span th:text="${reservation.guest.name}"></span></p>
+    <p>Room: <span th:text="${reservation.room.number}"></span></p>
+    <form th:action="@{/checkin/confirm}" method="post">
+        <input type="hidden" name="reservationId" th:value="${reservation.id}"/>
+        <button type="submit">Check‑In</button>
+    </form>
+</div>
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+</body>
+</html>

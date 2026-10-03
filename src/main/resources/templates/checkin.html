@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Guest Check‑In</title>
+</head>
+<body>
+<h1>Guest Check‑In</h1>
+<form th:action="@{/checkin}" method="post">
+    <label>Reservation ID: <input type="number" name="reservationId" required/></label>
+    <button type="submit">Lookup</button>
+</form>
+<p th:if="${error}" th:text="${error}" style="color:red;"></p>
+</body>
+</html>

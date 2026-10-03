@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Check‑In Confirmation</title>
+</head>
+<body>
+<h1>Check‑In Successful</h1>
+<div th:if="${reservation}">
+    <p>Reservation ID: <span th:text="${reservation.id}"></span></p>
+    <p>Room <span th:text="${reservation.room.number}"></span> is now Occupied.</p>
+    <p>Guest: <span th:text="${reservation.guest.name}"></span></p>
+</div>
+<p>Receipt printed.</p>
+</body>
+</html>
