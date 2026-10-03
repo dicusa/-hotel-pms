@@ -19,6 +19,7 @@
     <hibernate.version>6.4.0.Final</hibernate.version>
     <h2.version>2.2.224</h2.version>
     <java.jwt.version>4.4.0</java.jwt.version>
+    <org.json.version>20230618</org.json.version>
   </properties>
 
   <dependencies>
@@ -58,6 +59,12 @@
       <groupId>com.auth0</groupId>
       <artifactId>java-jwt</artifactId>
       <version>${java.jwt.version}</version>
+    </dependency>
+    <!-- JSON library for API -->
+    <dependency>
+      <groupId>org.json</groupId>
+      <artifactId>json</artifactId>
+      <version>${org.json.version}</version>
     </dependency>
   </dependencies>
 
