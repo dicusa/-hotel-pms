@@ -10,6 +10,7 @@
     <class>com.example.model.Guest</class>
     <class>com.example.model.Reservation</class>
     <class>com.example.model.Invoice</class>
+    <class>com.example.model.User</class>
     <properties>
       <property name="jakarta.persistence.jdbc.driver" value="org.h2.Driver"/>
       <property name="jakarta.persistence.jdbc.url" value="jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1"/>
