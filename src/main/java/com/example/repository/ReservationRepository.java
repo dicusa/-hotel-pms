@@ -6,13 +6,10 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
-import java.util.List;
 
 public interface ReservationRepository extends JpaRepository<Reservation, Long> {
+    @Query("SELECT COUNT(DISTINCT r.room.id) FROM Reservation r WHERE r.checkInDate <= :end AND r.checkOutDate >= :start")
+    long countDistinctRoomByDateRange(@Param("start") LocalDate start, @Param("end") LocalDate end);
 
-    @Query("SELECT r FROM Reservation r WHERE r.room.id = :roomId AND " +
-            "(r.startDate <= :endDate AND r.endDate >= :startDate)")
-    List<Reservation> findByRoomIdAndDateOverlap(@Param("roomId") Long roomId,
-                                                  @Param("startDate") LocalDate startDate,
-                                                  @Param("endDate") LocalDate endDate);
+    long countByCheckInDate(LocalDate date);
 }
