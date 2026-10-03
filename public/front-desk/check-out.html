@@ -14,7 +14,97 @@
   </nav>
   <main>
     <h1>Check‑Out</h1>
-    <p>Check‑Out screen placeholder.</p>
+    <div id="loader">Loading reservation...</div>
+    <div id="reservation-details" style="display:none;">
+      <p><strong>Reservation ID:</strong> <span id="res-id"></span></p>
+      <p><strong>Guest Name:</strong> <span id="guest-name"></span></p>
+      <p><strong>Room Number:</strong> <span id="room-number"></span></p>
+      <p><strong>Total Charges:</strong> $<span id="total-charges"></span></p>
+      <p><strong>Outstanding Balance:</strong> $<span id="outstanding-balance"></span></p>
+      <p><strong>Status:</strong> <span id="status"></span></p>
+      <button id="checkout-btn">Settle &amp; Check‑Out</button>
+    </div>
+    <div id="manual-entry" style="display:none;">
+      <label for="manual-id">Enter Reservation ID:</label>
+      <input type="text" id="manual-id" />
+      <button id="load-btn">Load Reservation</button>
+    </div>
   </main>
+  <script>
+    async function fetchReservation(id) {
+      const resp = await fetch(`/api/reservations/${id}`);
+      if (!resp.ok) throw new Error('Failed to fetch reservation');
+      return await resp.json();
+    }
+
+    function showDetails(res) {
+      document.getElementById('loader').style.display = 'none';
+      document.getElementById('reservation-details').style.display = 'block';
+      document.getElementById('res-id').textContent = res.id;
+      document.getElementById('guest-name').textContent = res.guestName || '';
+      document.getElementById('room-number').textContent = res.roomNumber || '';
+      document.getElementById('total-charges').textContent = (res.totalCharges || 0).toFixed(2);
+      document.getElementById('outstanding-balance').textContent = (res.outstandingBalance || 0).toFixed(2);
+      document.getElementById('status').textContent = res.status;
+    }
+
+    async function settleReservation(id) {
+      const resp = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ reservationId: id })
+      });
+      if (!resp.ok) throw new Error('Checkout failed');
+      return await resp.json();
+    }
+
+    document.addEventListener('DOMContentLoaded', async () => {
+      const params = new URLSearchParams(window.location.search);
+      const reservationId = params.get('id');
+      if (reservationId) {
+        try {
+          const res = await fetchReservation(reservationId);
+          showDetails(res);
+        } catch (e) {
+          console.error(e);
+          document.getElementById('loader').textContent = 'Failed to load reservation.';
+        }
+      } else {
+        document.getElementById('loader').style.display = 'none';
+        document.getElementById('manual-entry').style.display = 'block';
+      }
+
+      document.getElementById('load-btn')?.addEventListener('click', async () => {
+        const id = document.getElementById('manual-id').value.trim();
+        if (!id) return alert('Please enter a reservation ID');
+        document.getElementById('loader').style.display = 'block';
+        document.getElementById('manual-entry').style.display = 'none';
+        try {
+          const res = await fetchReservation(id);
+          showDetails(res);
+        } catch (e) {
+          console.error(e);
+          document.getElementById('loader').textContent = 'Failed to load reservation.';
+        }
+      });
+
+      document.getElementById('checkout-btn')?.addEventListener('click', async () => {
+        const id = document.getElementById('res-id').textContent;
+        const btn = document.getElementById('checkout-btn');
+        btn.disabled = true;
+        try {
+          const result = await settleReservation(id);
+          // Assume API returns updated reservation object
+          document.getElementById('status').textContent = result.status;
+          document.getElementById('outstanding-balance').textContent = (result.outstandingBalance || 0).toFixed(2);
+          alert('Check‑Out successful. Room set to needs‑cleaning.');
+        } catch (e) {
+          console.error(e);
+          alert('Check‑Out failed');
+          btn.disabled = false;
+        }
+      });
+    });
+  </script>
 </body>
 </html>
